@@ -1,5 +1,5 @@
 # duono
-A pomodoro scheduler which lets you focus on your work.
+A pomodoro scheduler that lets you focus on your work.
 
 ## Usage
 
