@@ -66,6 +66,10 @@ window.onload = ()=>{
 
         }
 
+        var calendarDiv = document.getElementById("calendar")
+        calendarDiv.scrollBy(0, 200 * window.innerHeight/100);
+        updateBar()
+
         cookies = document.cookie                           // Load cookies
         if(!readCookie("usecookies")){
             addTask("1 Task")
@@ -191,8 +195,89 @@ function writeTasks(tasks, dones){
     }
 }
 
+function resetCalendar(){              // Reset calendar values
+    writeCalendarNodes(Array(336).fill(""))
+}
+
 // Start of timer
 
-window.setInterval(function(){
-    
+function getPreviousMondayMidnight()      // From Matthew Lymer @ https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday
+{
+    var date = new Date();
+    var day = date.getDay();
+    var prevMonday;
+    if(date.getDay() == 0){
+        prevMonday = new Date().setDate(date.getDate() - 7);
+    }
+    else{
+        prevMonday = new Date().setDate(date.getDate() - day);
+    }
+
+    return new Date(prevMonday).setHours(24,0,0,0);
+}
+
+function secondsSinceMondayMidnight(){
+    return (new Date().getTime() - new Date(getPreviousMondayMidnight()).getTime())/1000
+}
+
+function findNextTrueElement(array, index=0){
+    for (let i = index; i < array.length; i++) {
+        if(array[i]){return i}
+    }
+    return false
+}
+
+function markCalendarNode(index){
+    nodes = document.querySelectorAll("[id=calendarnode]")
+    if(nodes[index-1].classList.contains("currentnode")){
+        nodes[index-1].classList.remove("currentnode")
+    }
+    if(!nodes[index].classList.contains("currentnode")){
+        nodes[index].classList.add("currentnode")
+    }
+}
+
+function updateBar(){     //updates red bar
+    var bar = document.getElementById("bar");
+    var secs = secondsSinceMondayMidnight();
+    var days = Math.floor(secs / 86400) + 1; // monday is 1 to ease math (86400 secs = 1 day)
+    secs %= 86400;
+    var [vw, px] = [10 * days, 2 * days];      // a calendar node is 10 vw and 2 px wide
+    var vh = (480 * secs) / 86400 // where 480vh = 86400secs
+    bar.style.transform = `translate(calc(-${vw}vw - ${px}px), calc(1vh + ${vh}vh - 0.25vh))`;   //the calendar has a 1 vh margin, and the border is .5 vh and needs to be centered
+}
+
+var audio = new Audio("bellsound.mp3")
+
+interval = window.setInterval(function(){
+    cNodes = readCalendarNodes()
+    currentCNode = cNodes[Math.floor(secondsSinceMondayMidnight()/1800)]         // 1800 secs = 0.5 hours, 1500 = 25 mins
+    markCalendarNode(Math.floor(secondsSinceMondayMidnight()/1800))
+    secondsSinceBlockStart = Math.round(secondsSinceMondayMidnight()%1800)
+    if(secondsSinceBlockStart % 30 == 0){updateBar()}
+    if(currentCNode.slice(0,2) in idNumbers){
+        if(secondsSinceBlockStart < 1500){
+            secs = (1500 - secondsSinceBlockStart) % 60
+            mins = Math.floor((1500 - secondsSinceBlockStart) / 60)
+            document.getElementById("worktext").textContent = `Now Work on ${currentCNode.slice(2)}! ${mins} m, ${secs} s`
+        }else{
+            secs = (1800 - secondsSinceBlockStart) % 60
+            mins = Math.floor((1800 - secondsSinceBlockStart) / 60)
+            document.getElementById("worktext").textContent = `Now Rest! ${mins} m, ${secs} s`
+        }
+        if(secondsSinceBlockStart == 0 || secondsSinceBlockStart == 1500){
+            audio.play()
+        }
+    }else{
+        var nextBlock = findNextTrueElement(cNodes, Math.floor(secondsSinceMondayMidnight()/1800))
+        if (nextBlock !== false){
+            secs = (1800 - secondsSinceBlockStart) % 60
+            mins = Math.floor((1800 - secondsSinceBlockStart) / 60) + (30 * (  nextBlock - Math.floor(secondsSinceMondayMidnight()/1800)) )
+            hours = Math.floor(mins / 60)
+            mins = mins % 60
+            document.getElementById("worktext").textContent = `Next Block in ${hours} h, ${mins} minutes and ${secs} s`
+        }else{
+            document.getElementById("worktext").textContent = `You're free until next week!`
+        }
+    }
 }, 1000);

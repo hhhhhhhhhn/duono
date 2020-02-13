@@ -151,8 +151,6 @@ input{
     padding: 0;
 }
 
-
-
 #calendarnode{
     height: Calc(10vh - 4px);
     border: 1px solid #ddd;
@@ -162,3 +160,21 @@ input{
     padding-right: .5vw;
 }
 
+.currentnode{
+    border: 1px solid #f00 !important;
+}
+
+#nowwork{
+    text-align: center;
+    font-size: 3.3vh;
+}
+
+#bar{
+    background-color: red;
+    position: relative;
+    padding-left: 5vw;
+    padding-right: calc(5vw + 2px);
+    height: .5vh;
+    width: 101%;
+    transform: translate(calc(-40vw - 8px), calc(1vh + 480vh));
+}
