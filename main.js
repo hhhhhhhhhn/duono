@@ -240,7 +240,7 @@ function markCalendarNode(index){
 function updateBar(){     //updates red bar
     var bar = document.getElementById("bar");
     var secs = secondsSinceMondayMidnight();
-    var days = Math.floor(secs / 86400) + 1; // monday is 1 to ease math (86400 secs = 1 day)
+    var days = 7 - Math.floor(secs / 86400); // days are in reverse tp ease math (86400 secs = 1 day)
     secs %= 86400;
     var [vw, px] = [10 * days, 2 * days];      // a calendar node is 10 vw and 2 px wide
     var vh = (480 * secs) / 86400 // where 480vh = 86400secs
