@@ -31,9 +31,9 @@ window.onbeforeunload = function(){
     if(readCookie("usecookies") == "1"){
         calendarnodes = readCalendarNodes();
         [tasks, dones] =  readTasks();
-        createCookie("cnodes", calendarnodes.join("&"))
-        createCookie("tasks", tasks.join("&"))
-        createCookie("dones", dones.join("&"))
+        createCookie("cnodes", calendarnodes.join("&"), 1000)
+        createCookie("tasks", tasks.join("&"), 1000)
+        createCookie("dones", dones.join("&"), 1000)
     }
  }
 
