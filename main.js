@@ -1,39 +1,10 @@
-//cookies, taken from https://www.quirksmode.org/js/cookies.html#script
-
-function createCookie(name,value,days) {
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        var expires = "; expires="+date.toUTCString();
-    }
-    else var expires = "";
-    document.cookie = name+"="+value+expires+"; path=/";
-}
-
-function readCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-
-function eraseCookie(name) {
-    createCookie(name,"",-1);
-}
-
-///
-
 window.onbeforeunload = function(){
-    if(readCookie("usecookies") == "1"){
+    if(window.localStorage.getItem("usels") == "1"){
         calendarnodes = readCalendarNodes();
         [tasks, dones] =  readTasks();
-        createCookie("cnodes", calendarnodes.join("&"), 1000)
-        createCookie("tasks", tasks.join("&"), 1000)
-        createCookie("dones", dones.join("&"), 1000)
+        window.localStorage.setItem("cnodes", calendarnodes.join("&"), 1000)
+        window.localStorage.setItem("tasks", tasks.join("&"), 1000)
+        window.localStorage.setItem("dones", dones.join("&"), 1000)
     }
  }
 
@@ -70,17 +41,16 @@ window.onload = ()=>{
         calendarDiv.scrollBy(0, 200 * window.innerHeight/100);
         updateBar()
 
-        cookies = document.cookie                           // Load cookies
-        if(!readCookie("usecookies")){
+        if(!window.localStorage.getItem("usels")){
             addTask("1 Task")
-            if(confirm("This site uses cookies to preserve your schedule and tasks between visits")){
-                createCookie("usecookies", "1")
+            if(confirm("This site uses local storage to preserve your schedule and tasks between visits")){
+                window.localStorage.setItem("usels", "1")
             }else{
-                createCookie("usecookies", "0")
+                window.localStorage.setItem("usels", "0")
             }
-        }else if(readCookie("usecookies") == "1"){
-            tasks = readCookie("tasks").split("&")
-            dones = readCookie("dones").split("&")
+        }else if(window.localStorage.getItem("usels") == "1"){
+            tasks = window.localStorage.getItem("tasks").split("&")
+            dones = window.localStorage.getItem("dones").split("&")
             if(tasks[0] == "" && tasks.length == 1){
                 tasks = []
             }
@@ -88,7 +58,7 @@ window.onload = ()=>{
                 dones = []
             }
             writeTasks(tasks, dones)
-            calendarnodes = readCookie("cnodes").split("&")
+            calendarnodes = window.localStorage.getItem("cnodes").split("&")
             writeCalendarNodes(calendarnodes)
         }
 
