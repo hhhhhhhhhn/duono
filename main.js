@@ -239,8 +239,8 @@ interval = window.setInterval(function(){
             audio.play()
         }
     }else{
-        var nextBlock = findNextTrueElement(cNodes, Math.floor(secondsSinceMondayMidnight()/1800))
-        if (nextBlock !== false){
+        var nextBlock = findNextTrueElement(cNodes, Math.floor(secondsSinceMondayMidnight()/1800)) - 1
+        if (nextBlock !== -1){
             secs = (1800 - secondsSinceBlockStart) % 60
             mins = Math.floor((1800 - secondsSinceBlockStart) / 60) + (30 * (  nextBlock - Math.floor(secondsSinceMondayMidnight()/1800)) )
             hours = Math.floor(mins / 60)
