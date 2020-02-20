@@ -26,7 +26,6 @@ window.onload = ()=>{
         }
 
         for(var ul of document.getElementById("calendar").childNodes){ //adds calendar nodes
-
             if(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].includes(ul.id)){
                 for(var i = 0; i < 48; i++){
                     ul.insertAdjacentHTML('beforeend', `<li>
@@ -37,11 +36,13 @@ window.onload = ()=>{
 
         }
 
-        var calendarDiv = document.getElementById("calendar")
-        calendarDiv.scrollBy(0, 200 * window.innerHeight/100);
+        var calendarDiv = document.getElementById("calendar")                          // Scrolls
+        var blocksSinceDayStart = Math.floor((secondsSinceMondayMidnight() % 86400) / 1800) - 1                 // 86400 = seconds in a day, 
+        calendarDiv.scrollBy(0, calendarNodeHeight() * blocksSinceDayStart * window.innerHeight/100);
+
         updateBar()
 
-        if(!window.localStorage.getItem("usels")){
+        if(!window.localStorage.getItem("usels")){           /// Local storage
             addTask("1 Task")
             if(confirm("This site uses local storage to preserve your schedule and tasks between visits")){
                 window.localStorage.setItem("usels", "1")
@@ -62,7 +63,7 @@ window.onload = ()=>{
             writeCalendarNodes(calendarnodes)
         }
 
-        document.addEventListener('click',function(e){
+        document.addEventListener('click',function(e){             /// Task interaction
             if(e.target && e.target.id== "x"){
                   e.target.parentNode.parentNode.parentNode.remove()     //detects removal of task
              }else if(e.target && e.target.id== "add"){
@@ -197,7 +198,7 @@ function findNextTrueElement(array, index=0){
     return false
 }
 
-function markCalendarNode(index){
+function markCalendarNode(index){             // Gives the current calendar node a red outline
     nodes = document.querySelectorAll("[id=calendarnode]")
     if(nodes[index-1].classList.contains("currentnode")){
         nodes[index-1].classList.remove("currentnode")
@@ -213,7 +214,7 @@ function updateBar(){     //updates red bar
     var days = 7 - Math.floor(secs / 86400); // days are in reverse tp ease math (86400 secs = 1 day)
     secs %= 86400;
     var [vw, px] = [10 * days, 2 * days];      // a calendar node is 10 vw and 2 px wide
-    var vh = (480 * secs) / 86400 // where 480vh = 86400secs
+    var vh = (48 * calendarNodeHeight() * secs) / 86400 // where 48 calendar node heights (1 day) = 86400secs
     bar.style.transform = `translate(calc(-${vw}vw - ${px}px), calc(1vh + ${vh}vh - 0.25vh))`;   //the calendar has a 1 vh margin, and the border is .5 vh and needs to be centered
 }
 
@@ -251,3 +252,26 @@ interval = window.setInterval(function(){
         }
     }
 }, 1000);
+
+
+// Zooming behaviour
+function setCalendarNodeHeight(heightInVH){
+    document.documentElement.style.setProperty("--cnode-vertical-height", `${heightInVH}vh`);
+}
+
+function calendarNodeHeight(){
+    var value = window.getComputedStyle(document.documentElement).getPropertyValue("--cnode-vertical-height")
+    return parseFloat(value.slice(0,-2))
+}
+
+document.addEventListener('keydown', function(e){
+    if(e.keyCode == 187){
+        setCalendarNodeHeight(calendarNodeHeight() * 1.25)
+        document.getElementById('calendar').scrollTop *= 1.25
+        updateBar()
+    }else if(e.keyCode == 189){
+        setCalendarNodeHeight(calendarNodeHeight() * 0.8)
+        document.getElementById('calendar').scrollTop *= 0.8
+        updateBar()
+    }
+} );

@@ -1,5 +1,9 @@
 /* * { border: 1px solid black; } */
 
+:root{
+    --cnode-vertical-height:4vh;
+}
+
 body{
     margin: 0;
     font-family: 'Open Sans', sans-serif;
@@ -146,13 +150,13 @@ input{
 }
 
 #times div{
-    height: 10vh;
+    height: var(--cnode-vertical-height);
     margin: 0;
     padding: 0;
 }
 
 #calendarnode{
-    height: Calc(10vh - 4px);
+    height: Calc(var(--cnode-vertical-height) - 4px);
     border: 1px solid #ddd;
     font-size: 2vh;
     width: 9vw;
