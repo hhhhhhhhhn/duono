@@ -246,7 +246,7 @@ interval = window.setInterval(function(){
             mins = Math.floor((1800 - secondsSinceBlockStart) / 60) + (30 * (  nextBlock - Math.floor(secondsSinceMondayMidnight()/1800)) )
             hours = Math.floor(mins / 60)
             mins = mins % 60
-            document.getElementById("worktext").textContent = `Next Block in ${hours} h, ${mins} minutes and ${secs} s`
+            document.getElementById("worktext").textContent = `Next Block in ${hours} h, ${mins} m and ${secs} s`
         }else{
             document.getElementById("worktext").textContent = `You're free until next week!`
         }
