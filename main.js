@@ -269,9 +269,11 @@ document.addEventListener('keydown', function(e){
         setCalendarNodeHeight(calendarNodeHeight() * 1.25)
         document.getElementById('calendar').scrollTop *= 1.25
         updateBar()
+        document.activeElement.blur()
     }else if(e.keyCode == 189){
         setCalendarNodeHeight(calendarNodeHeight() * 0.8)
         document.getElementById('calendar').scrollTop *= 0.8
         updateBar()
+        document.activeElement.blur()
     }
 } );
