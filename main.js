@@ -236,7 +236,7 @@ interval = window.setInterval(function(){
             mins = Math.floor((1800 - secondsSinceBlockStart) / 60)
             document.getElementById("worktext").textContent = `Now Rest! ${mins} m, ${secs} s`
         }
-        if(secondsSinceBlockStart == 0 || secondsSinceBlockStart == 1500){
+        if(secondsSinceBlockStart == 1 || secondsSinceBlockStart == 1500){
             audio.play()
         }
     }else{
