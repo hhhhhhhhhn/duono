@@ -171,8 +171,9 @@ function resetCalendar(){
 
 // Start of timer
 
-function getPreviousMondayMidnight(){                                           // From Matthew Lymer @
-    var date = new Date()                                                       // https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday
+function getPreviousMondayMidnight(){
+    /** From Matthew Lymer @  https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday */
+    var date = new Date()
     var day = date.getDay()
     if(day == 0){
         var prevMonday = new Date().setDate(date.getDate() - 7)
