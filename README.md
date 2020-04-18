@@ -1,6 +1,7 @@
 # duono
 A pomodoro scheduler that lets you focus on your work.
 
+
 ## Usage
 
 Add tasks using the left interface, and if the task starts with a number from 1 to 6 followed by a space it will be considered work, and will have a predefined color.
@@ -10,6 +11,17 @@ Click any calendar block to change its text, in which the number rule still appl
 You can reset the calendar through the js function  `resetCalendar()`
 
 Cookies are used to save the calendar and tasks between visits
+
+
+## Settings
+
+Use the following format:
+
+```javascript
+{
+    "audio": "{url}"   //If not privided, will play the default bell sound.
+}
+```
 
 ---
 

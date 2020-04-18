@@ -1,12 +1,4 @@
-window.onbeforeunload = function(){
-    if(window.localStorage.getItem("useLS") == "1"){
-        calendarnodes = readCalendarNodes();
-        [tasks, dones] =  readTasks();
-        window.localStorage.setItem("cnodes", calendarnodes.join("&"), 1000)
-        window.localStorage.setItem("tasks", tasks.join("&"), 1000)
-        window.localStorage.setItem("dones", dones.join("&"), 1000)
-    }
- }
+// Start of initial render
 
 window.onload = ()=>{
         for (var i = 0; i < 48; i++) {                                          // Writes times in calendar
@@ -20,7 +12,7 @@ window.onload = ()=>{
                                 <p>${hours}:${minutes}</p>
                             </div></li>`
             var times = document.getElementById("times")
-            times.insertAdjacentHTML('beforeend', timeHtml);
+            times.insertAdjacentHTML('beforeend', timeHtml)
         }
 
         for(var ul of document.getElementById("calendar").childNodes){          // Adds calendar nodes
@@ -29,7 +21,7 @@ window.onload = ()=>{
                 for(var i = 0; i < 48; i++){
                     ul.insertAdjacentHTML('beforeend', `<li>
                     <input type="text" id="calendarnode">
-                    </li>`);
+                    </li>`)
                 }
             }
         }
@@ -53,34 +45,32 @@ window.onload = ()=>{
         }else if(window.localStorage.getItem("useLS") == "1"){
             var tasks = window.localStorage.getItem("tasks").split("&")
             var dones = window.localStorage.getItem("dones").split("&")
-            if(tasks[0] == "" && tasks.length == 1){
-                tasks = []
-            }
-            if(dones[0] == "" && dones.length == 1){
-                dones = []
-            }
+            if(tasks[0] == "" && tasks.length == 1) tasks = []
+            if(dones[0] == "" && dones.length == 1) dones = []
             writeTasks(tasks, dones)
             var calendarnodes = window.localStorage.getItem("cnodes").split("&")
             writeCalendarNodes(calendarnodes)
+            var settings = window.localStorage.getItem("settings")
+            setSettings(settings || "{\n\n}")
         }
 
-        document.addEventListener('click',function(e){                          // Task interaction
+        document.addEventListener('click', function(e){                         // Task interaction
             if(e.target && e.target.id== "x"){
                   e.target.parentNode.parentNode.parentNode.remove()
-             }else if(e.target && e.target.id== "add"){
+            }else if(e.target && e.target.id== "add"){
                 var text = document.getElementById("addtext").value
                 document.getElementById("addtext").value = ""
                 addTask(text, "taskslist")
-             }else if(e.target && e.target.id== "v"){
+            }else if(e.target && e.target.id== "v"){
                 var task = readTask(e.target.parentNode.parentNode.parentNode)
                 e.target.parentNode.parentNode.parentNode.remove()
                 addTask(task, "donelist")
-             }else if(e.target && e.target.id== "resetbutton"){
+            }else if(e.target && e.target.id== "resetbutton"){
                 var bothlists = [document.getElementById("taskslist"),
                     document.getElementById("donelist")]
                 emptyUL(bothlists)
-             }
-        });
+            }
+        })
         document.addEventListener('input', function(e){                         // Changes calendar node color based on
             if(e.target.id == "calendarnode"){                                  // its text
                 var clas = idNumbers[e.target.value.slice(0,2)]
@@ -169,6 +159,27 @@ function resetCalendar(){
     writeCalendarNodes(Array(336).fill(""))
 }
 
+function getSettings(){
+    return JSON.parse(document.getElementById("settings").value)
+}
+
+function setSettings(settings){
+    if(typeof settings == "object") settings = JSON.stringify(settings, null, 2)
+    document.getElementById("settings").value = settings
+}
+
+window.onbeforeunload = function(){
+    if(window.localStorage.getItem("useLS") == "1"){
+        var calendarnodes = readCalendarNodes()
+        var [tasks, dones] =  readTasks()
+        window.localStorage.setItem("cnodes", calendarnodes.join("&"))
+        window.localStorage.setItem("tasks", tasks.join("&"))
+        window.localStorage.setItem("dones", dones.join("&"))
+        window.localStorage.setItem("settings", JSON.stringify(getSettings(),
+                                                               null, 2))
+    }
+}
+
 // Start of timer
 
 function getPreviousMondayMidnight(){
@@ -217,9 +228,7 @@ function updateBar(){                                                           
         `translate(calc(-${vw}vw - ${px}px), calc(1vh + ${vh}vh - 0.25vh))`     // the bar is .5 vh and needs to be
 }                                                                               // centered
 
-var audio = new Audio("bellsound.mp3")
-
-interval = window.setInterval(function(){
+var interval = window.setInterval(function(){
     var cNodes = readCalendarNodes()
     var currentCNodeIndex = Math.floor(secondsSinceMondayMidnight()/1800)
     var currentCNode = cNodes[currentCNodeIndex]                                // 1800 secs = 0.5 hours, 1500 = 25 mins
@@ -241,6 +250,7 @@ interval = window.setInterval(function(){
                 `Now Rest! ${mins} m, ${secs} s`
         }
         if(secondsSinceBlockStart == 1 || secondsSinceBlockStart == 1500){
+            var audio = new Audio(getSettings().audio || "bellsound.mp3")
             audio.play()
         }
     }else{
@@ -260,8 +270,7 @@ interval = window.setInterval(function(){
                 .textContent = `You're free until next week!`
         }
     }
-}, 1000);
-
+}, 1000)
 
 // Start of Zooming behaviour
 
