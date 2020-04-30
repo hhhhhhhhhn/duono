@@ -228,6 +228,8 @@ function updateBar(){                                                           
         `translate(calc(-${vw}vw - ${px}px), calc(1vh + ${vh}vh - 0.25vh))`     // the bar is .5 vh and needs to be
 }                                                                               // centered
 
+var audio = new Audio("bellsound.mp3")
+
 var interval = window.setInterval(function(){
     var cNodes = readCalendarNodes()
     var currentCNodeIndex = Math.floor(secondsSinceMondayMidnight()/1800)
@@ -250,7 +252,9 @@ var interval = window.setInterval(function(){
                 `Now Rest! ${mins} m, ${secs} s`
         }
         if(secondsSinceBlockStart == 1 || secondsSinceBlockStart == 1500){
-            var audio = new Audio(getSettings().audio || "bellsound.mp3")
+            if(getSettings().audio != audio.src){
+                audio.src = getSettings().audio || "bellsound.mp3"
+            }
             audio.play()
         }
     }else{
